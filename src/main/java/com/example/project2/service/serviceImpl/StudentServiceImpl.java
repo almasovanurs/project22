@@ -2,15 +2,18 @@ package com.example.project2.service.serviceImpl;
 
 import com.example.project2.dto.request.StudentRequest;
 import com.example.project2.dto.response.StudentResponse;
+import com.example.project2.dto.response.view.StudentResponseView;
 import com.example.project2.model.Groups;
 import com.example.project2.model.Student;
 import com.example.project2.repository.GroupsRepository;
 import com.example.project2.repository.StudentRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -117,6 +120,30 @@ public class StudentServiceImpl {
     public List<Student> getAllStudents() {
 
         return studentRepository.findAll();
+    }
+
+
+    public StudentResponseView getAllStudentsPagination(String text, int page, int size) {
+        StudentResponseView responseView = new StudentResponseView();
+        PageRequest pageable = PageRequest.of(page - 1, size);
+        responseView.setResponses(view(search(text, pageable)));
+        return responseView;
+    }
+    public List<StudentResponse> view(List<Student> students){
+        List<StudentResponse> responses = new ArrayList<>();
+        for (Student student:students) {
+            responses.add(studentResponse(student));
+        }
+        return  responses;
+    }
+
+    private List<Student> search(String name, PageRequest pageable) {
+        if (name == null) {
+            return studentRepository.getByPagination(pageable);
+        } else {
+            //String text = name == null ? " " : name;
+            return studentRepository.searchAndPagination(name.toUpperCase(), pageable);
+        }
     }
 
 

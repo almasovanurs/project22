@@ -2,6 +2,7 @@ package com.example.project2.controller;
 
 import com.example.project2.dto.request.StudentRequest;
 import com.example.project2.dto.response.StudentResponse;
+import com.example.project2.dto.response.view.StudentResponseView;
 import com.example.project2.model.Student;
 import com.example.project2.service.serviceImpl.GroupsServiceImpl;
 import com.example.project2.service.serviceImpl.StudentServiceImpl;
@@ -54,6 +55,13 @@ public class StudentController {
     @Operation(summary = "get all students", description = "we can get all students")
     public List<Student> getAllStudents(){
         return studentService.getAllStudents();
+    }
+
+    @GetMapping
+    public StudentResponseView getAll(@RequestParam(name = "text", required = false) String text,
+                                      @RequestParam int page,
+                                      @RequestParam int size){
+        return studentService.getAllStudentsPagination(text, page, size);
     }
 
 }
